@@ -3,6 +3,8 @@ import { Cell, Row, Report, Reports } from "./types/balance-sheet-report";
 
 const BalanceSheetReport: React.FC = () => {
   const [report, setReport] = useState<Report | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBalanceSheetReports();
@@ -18,27 +20,45 @@ const BalanceSheetReport: React.FC = () => {
       setReport(reportData);
     } catch (err) {
       console.error("Error fetching:", err);
+      setError("Error fetching balance sheet data");
+    } finally {
+      setLoading(false);
     }
   };
 
   const renderHeaderRow = (cells: Cell[], index: number) => (
     <tr key={index}>
       {cells.map((cell, cellIndex) => (
-        <th key={cellIndex}>{cell.Value}</th>
+        <th
+          key={cellIndex}
+          className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider font-heading"
+        >
+          {cell.Value}
+        </th>
       ))}
     </tr>
   );
 
   const renderSectionRow = (title: string | undefined, index: number) => (
     <tr key={index}>
-      <th colSpan={3}>{title}</th>
+      <th
+        colSpan={3}
+        className="px-6 py-3 text-left text-sm font-medium text-primary uppercase tracking-wider bg-background font-heading"
+      >
+        {title}
+      </th>
     </tr>
   );
 
   const renderDataRow = (cells: Cell[], index: number) => (
     <tr key={index}>
       {cells.map((cell, cellIndex) => (
-        <td key={cellIndex}>{cell.Value}</td>
+        <td
+          key={cellIndex}
+          className="px-6 py-4 whitespace-nowrap text-text font-body"
+        >
+          {cell.Value}
+        </td>
       ))}
     </tr>
   );
@@ -64,27 +84,38 @@ const BalanceSheetReport: React.FC = () => {
     });
   };
 
-  if (!report) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+
+  if (error)
+    return <div className="text-accent text-center font-body">{error}</div>;
+  if (!report) return null;
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">{report.ReportName}</h1>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-        <table className="w-full table-auto">
-          <thead className="bg-gray-50">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 bg-background">
+      <h1 className="text-3xl font-bold mb-4 text-heading font-heading">
+        {report.ReportName}
+      </h1>
+      <div className="shadow overflow-hidden border border-border sm:rounded-lg">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-background">
             <tr>
               {report.ReportTitles.map((title, index) => (
                 <th
                   key={index}
                   colSpan={3}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider font-heading"
                 >
                   {title}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-border">
             {renderRows(report.Rows)}
           </tbody>
         </table>
