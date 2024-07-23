@@ -1,10 +1,10 @@
 import { Reports } from "../../types/balance-sheet-report";
 
-const API_URL = "http://localhost:4001/api/v1";
+const API_URL = "http://localhost:4001";
 
 export const fetchBalanceSheetReports = async (): Promise<Reports> => {
   try {
-    const response = await fetch(`${API_URL}/balance-sheet`);
+    const response = await fetch(`${API_URL}/api/v1/balance-sheet`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

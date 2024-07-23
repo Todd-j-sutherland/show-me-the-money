@@ -68,7 +68,6 @@ const BalanceSheetReport: React.FC = () => {
       }`}
     >
       {cells.map((cell, cellIndex) => {
-        console.log(cell.Value);
         const value = parseFloat(cell.Value);
         const isNegative = value < 0;
 
@@ -117,7 +116,7 @@ const BalanceSheetReport: React.FC = () => {
   if (!report) return null;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 bg-background">
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 bg-background pb-3">
       <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-heading font-heading">
