@@ -15,7 +15,6 @@ const BalanceSheetReport: React.FC = () => {
       try {
         const data: Reports = await fetchBalanceSheetReports();
         setReport(data.Reports[0]);
-        console.log(data.Reports[0]);
       } catch (err) {
         setError("Error fetching balance sheet data");
       } finally {
@@ -77,7 +76,7 @@ const BalanceSheetReport: React.FC = () => {
           <td
             key={cellIndex}
             className={`px-4 py-3 whitespace-nowrap text-sm font-body border-b border-border ${
-              cellIndex > 0 ? "text-right" : ""
+              cellIndex > 0 ? "text-left" : ""
             } ${isNegative ? "text-red-500" : ""}`}
           >
             {cell.Value}
@@ -114,26 +113,34 @@ const BalanceSheetReport: React.FC = () => {
   };
 
   if (loading) return <LoadingSpinner />;
-
   if (error) return <Toast isError={true} message={error} />;
-
   if (!report) return null;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 bg-background">
-      <h1 className="text-3xl sm:text-4xl font-bold my-6 text-heading font-heading text-center">
-        {report.ReportName}
-      </h1>
+      <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-heading font-heading">
+            {report.ReportName}
+          </h1>
+        </div>
+        <div className="text-right">
+          <p className="text-lg font-semibold text-primary">
+            {report.ReportTitles[0]}
+          </p>
+          <p className="text-sm text-secondary mt-1">{report.ReportDate}</p>
+        </div>
+      </div>
+
       <div className="shadow-lg overflow-hidden border border-border sm:rounded-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-border">
             <thead className="bg-background">
               <tr>
-                {report.ReportTitles.map((title, index) => (
+                {report.ReportTitles.slice(1).map((title, index) => (
                   <th
                     key={index}
-                    colSpan={3}
-                    className="px-4 py-3 text-left text-sm font-medium text-secondary uppercase tracking-wider font-heading border-b border-border"
+                    className="px-4 py-3 text-left text-sm font-medium text-secondary uppercase tracking-wider font-heading border-b border-border whitespace-nowrap"
                   >
                     {title}
                   </th>
