@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Cell, Row, Report, Reports } from "./types/balance-sheet-report";
-
+import { Cell, Row, Report, Reports } from "../../types/balance-sheet-report";
+import { fetchBalanceSheetReports } from "../../services/balanceSheetReport";
 const BalanceSheetReport: React.FC = () => {
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchBalanceSheetReports();
-  }, []);
+    const getBalanceSheet = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchBalanceSheetReports();
+        setReport(data.Reports[0]);
+        console.log(data.Reports[0]);
+      } catch (err) {
+        setError("Error fetching balance sheet data");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchBalanceSheetReports = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:4001/api/v1/balance-sheet"
-      );
-      const data: Reports = await response.json();
-      const reportData = data.Reports[0];
-      setReport(reportData);
-    } catch (err) {
-      console.error("Error fetching:", err);
-      setError("Error fetching balance sheet data");
-    } finally {
-      setLoading(false);
-    }
-  };
+    getBalanceSheet();
+  }, []);
 
   const renderHeaderRow = (cells: Cell[], index: number) => (
     <tr key={index}>
