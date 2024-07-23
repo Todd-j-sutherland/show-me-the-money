@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Cell, Row, Report, Reports } from "../../types/balance-sheet-report";
 import { fetchBalanceSheetReports } from "../../services/balanceSheetReport";
+import LoadingSpinner from "../shared/Loading.Spinner";
+import Toast from "../shared/Toast";
 
 const BalanceSheetReport: React.FC = () => {
   const [report, setReport] = useState<Report | null>(null);
@@ -11,7 +13,7 @@ const BalanceSheetReport: React.FC = () => {
     const getBalanceSheet = async () => {
       setLoading(true);
       try {
-        const data = await fetchBalanceSheetReports();
+        const data: Reports = await fetchBalanceSheetReports();
         setReport(data.Reports[0]);
         console.log(data.Reports[0]);
       } catch (err) {
@@ -66,16 +68,22 @@ const BalanceSheetReport: React.FC = () => {
         index % 2 === 0 ? "bg-gray-50" : ""
       }`}
     >
-      {cells.map((cell, cellIndex) => (
-        <td
-          key={cellIndex}
-          className={`px-4 py-3 whitespace-nowrap text-sm text-text font-body border-b border-border ${
-            cellIndex > 0 ? "text-right" : ""
-          }`}
-        >
-          {cell.Value}
-        </td>
-      ))}
+      {cells.map((cell, cellIndex) => {
+        console.log(cell.Value);
+        const value = parseFloat(cell.Value);
+        const isNegative = value < 0;
+
+        return (
+          <td
+            key={cellIndex}
+            className={`px-4 py-3 whitespace-nowrap text-sm font-body border-b border-border ${
+              cellIndex > 0 ? "text-right" : ""
+            } ${isNegative ? "text-red-500" : ""}`}
+          >
+            {cell.Value}
+          </td>
+        );
+      })}
     </tr>
   );
 
@@ -105,15 +113,10 @@ const BalanceSheetReport: React.FC = () => {
     });
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+  if (loading) return <LoadingSpinner />;
 
-  if (error)
-    return <div className="text-accent text-center font-body">{error}</div>;
+  if (error) return <Toast isError={true} message={error} />;
+
   if (!report) return null;
 
   return (
