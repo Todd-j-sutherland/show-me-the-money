@@ -22,6 +22,7 @@ The application consists of three parts:
 1. Frontend (React): Runs on port 3001
 2. Backend (Express): Runs on port 4001
 3. Mock API: Runs on port 3000
+4. It does take an extra 30 seconds to establish the connection to the mock API, so the frontend will display a loading message until the connection is established
 
 
 ## Frontend
