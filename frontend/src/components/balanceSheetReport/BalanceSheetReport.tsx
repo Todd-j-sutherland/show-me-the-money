@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Cell, Row, Report, Reports } from "../../types/balance-sheet-report";
 import { fetchBalanceSheetReports } from "../../services/balanceSheetReport";
 import LoadingSpinner from "../shared/Loading.Spinner";
@@ -9,21 +9,22 @@ const BalanceSheetReport: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getBalanceSheet = async () => {
-      setLoading(true);
-      try {
-        const data: Reports = await fetchBalanceSheetReports();
-        setReport(data.Reports[0]);
-      } catch (err) {
-        setError("Error fetching balance sheet data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getBalanceSheet();
+  const getBalanceSheet = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data: Reports = await fetchBalanceSheetReports();
+      setReport(data.Reports[0]);
+    } catch (err) {
+      setError("Error fetching balance sheet data");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    getBalanceSheet();
+  }, [getBalanceSheet]);
 
   const renderHeaderRow = (cells: Cell[], index: number) => (
     <tr key={index} className="bg-primary bg-opacity-10">
@@ -112,7 +113,19 @@ const BalanceSheetReport: React.FC = () => {
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <Toast isError={true} message={error} />;
+  if (error)
+    return (
+      <div className="text-center">
+        <Toast isError={true} message={error} />
+        <div>Application failed</div>
+        <button
+          onClick={getBalanceSheet}
+          className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+        >
+          Retry
+        </button>
+      </div>
+    );
   if (!report) return null;
 
   return (
