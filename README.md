@@ -49,3 +49,12 @@ The application consists of three parts:
 
 
 
+## Process:
+- I started by setting up the frontend and backend applications separately in the same repository for accessibility 
+- My main concern was to put together the backend quickly so I could focus on the frontend
+- With the frontend I worked through the structure of the data and how to display it in a table format
+- I could have moved the table data into a separate component but I felt it was simple enough to keep it in the main component and could complicate things if I moved it
+- I added the error handling and loading states to the application
+- I added the service to handle the API call
+- I added the tests for the frontend
+- I then moved onto the backend and set up the Express server and the routes
