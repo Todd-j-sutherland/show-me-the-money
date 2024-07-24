@@ -1,13 +1,31 @@
-version: "3"
+version: "3.8"
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      target: development
     ports:
       - "4001:4001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: development
     ports:
       - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run start
+
   mock-api:
     image: jaypeng2015/show-me-the-money
     ports:
