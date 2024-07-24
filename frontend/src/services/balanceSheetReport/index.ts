@@ -1,6 +1,6 @@
 import { Reports } from "../../types/balance-sheet-report";
 
-const API_URL = "http://localhost:4001";
+export const API_URL = "http://localhost:4001";
 
 export const fetchBalanceSheetReports = async (): Promise<Reports> => {
   try {
