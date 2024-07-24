@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import { PORT } from "./config/constants";
 import balanceSheetRoutes from "./routes/balanceSheetRoutes";
 
+dotenv.config();
 const app = express();
 
 app.use(cors());
